@@ -1,4 +1,4 @@
-// ==================== DATA MANAGEMENT ====================
+
 class SocialMediaApp {
     constructor() {
         this.posts = [];
@@ -15,27 +15,22 @@ class SocialMediaApp {
         this.applyTheme();
     }
 
-    // ==================== AUTHENTICATION ====================
+
     setupEventListeners() {
-        // Auth events
+
         document.querySelector('#toggle-signup').addEventListener('click', () => this.toggleAuthForm());
         document.querySelector('#toggle-login').addEventListener('click', () => this.toggleAuthForm());
         document.querySelector('#login-form').addEventListener('submit', (e) => this.handleLogin(e));
         document.querySelector('#signup-form').addEventListener('submit', (e) => this.handleSignup(e));
 
-        // Feed events
         document.querySelector('#post-btn').addEventListener('click', () => this.createPost());
-        document.querySelector('#post-text').addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' && e.ctrlKey) this.createPost();
-        });
 
-        // Search and filter
         document.querySelector('#search-input').addEventListener('input', (e) => this.searchPosts(e.target.value));
         document.querySelectorAll('.filter-btn').forEach(btn => {
             btn.addEventListener('click', (e) => this.setFilter(e.target.dataset.filter, e.target));
         });
 
-        // Emoji buttons
+
         document.querySelectorAll('.emoji-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const emoji = e.target.dataset.emoji;
@@ -45,13 +40,13 @@ class SocialMediaApp {
             });
         });
 
-        // Theme toggle
+
         document.querySelector('#theme-toggle').addEventListener('click', () => this.toggleTheme());
 
-        // Logout
+
         document.querySelector('#logout-btn').addEventListener('click', () => this.logout());
 
-        // Modal
+
         document.querySelector('.modal-close').addEventListener('click', () => this.closeEditModal());
         document.querySelector('#cancel-edit').addEventListener('click', () => this.closeEditModal());
         document.querySelector('#save-edit').addEventListener('click', () => this.saveEdit());
@@ -72,7 +67,7 @@ class SocialMediaApp {
             return;
         }
 
-        // Simulate login
+    
         const users = JSON.parse(localStorage.getItem('users')) || [];
         const user = users.find(u => u.email === email && u.password === password);
 
@@ -103,7 +98,7 @@ class SocialMediaApp {
             return;
         }
 
-        // Store user
+
         let users = JSON.parse(localStorage.getItem('users')) || [];
         if (users.find(u => u.email === email)) {
             document.querySelector('#requiredPara').textContent = 'Email already registered!';
@@ -146,7 +141,7 @@ class SocialMediaApp {
         document.querySelector('#signup-form').classList.remove('active');
     }
 
-    // ==================== UI DISPLAY ====================
+ 
     showAuth() {
         document.querySelector('.auth-nav').style.display = 'flex' 
         document.querySelector('#auth-container').classList.add('active');
@@ -161,7 +156,7 @@ class SocialMediaApp {
         this.renderFeed();
     }
 
-    // ==================== POST MANAGEMENT ====================
+
     createPost() {
         const text = document.querySelector('#post-text').value.trim();
         const imageUrl = document.querySelector('#post-image').value.trim();
@@ -186,7 +181,7 @@ class SocialMediaApp {
         this.saveToStorage();
         this.renderFeed();
 
-        // Clear inputs
+
         document.querySelector('#post-text').value = '';
         document.querySelector('#post-image').value = '';
 
@@ -194,11 +189,16 @@ class SocialMediaApp {
     }
 
     deletePost(postId) {
-        if (confirm('Are you sure you want to delete this post?')) {
+       let delModal =  document.querySelector('#delete-modal');
+       delModal.style.display = 'flex';
+         document.querySelector('#confirm-delete').onclick = () => {
             this.posts = this.posts.filter(p => p.id !== postId);
             this.saveToStorage();
             this.renderFeed();
             console.log('[v0] Post deleted:', postId);
+        }
+        document.querySelector('#cancel-delete').onclick = () => {
+            delModal.style.display = 'none';
         }
     }
 
@@ -245,7 +245,7 @@ class SocialMediaApp {
         console.log('[v0] Post updated:', this.editingPostId);
     }
 
-    // ==================== SEARCH & FILTER ====================
+
     searchPosts(query) {
         this.renderFeed(query);
     }
@@ -260,7 +260,7 @@ class SocialMediaApp {
     getFilteredAndSortedPosts(searchQuery = '') {
         let filtered = this.posts;
 
-        // Search filter
+
         if (searchQuery) {
             filtered = filtered.filter(p =>
                 p.text.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -268,7 +268,7 @@ class SocialMediaApp {
             );
         }
 
-        // Sorting
+
         const sorted = [...filtered];
         switch (this.currentFilter) {
             case 'latest':
@@ -294,7 +294,7 @@ class SocialMediaApp {
         return sorted;
     }
 
-    // ==================== RENDERING ====================
+
     renderFeed(searchQuery = '') {
         const feed = document.querySelector('#posts-feed');
         const posts = this.getFilteredAndSortedPosts(searchQuery);
@@ -306,7 +306,7 @@ class SocialMediaApp {
 
         feed.innerHTML = posts.map(post => this.createPostHTML(post)).join('');
 
-        // Attach event listeners
+
         posts.forEach(post => {
             const likeBtn = document.querySelector(`[data-post-id="${post.id}"] .like-btn`);
             const deleteBtn = document.querySelector(`[data-post-id="${post.id}"] .delete-btn`);
@@ -316,6 +316,7 @@ class SocialMediaApp {
             if (deleteBtn) deleteBtn.addEventListener('click', () => this.deletePost(post.id));
             if (editBtn) editBtn.addEventListener('click', () => this.openEditModal(post.id));
         });
+         this.setupReactionEvents();
     }
 
     createPostHTML(post) {
@@ -381,7 +382,7 @@ class SocialMediaApp {
         return div.innerHTML;
     }
 
-    // ==================== THEME ====================
+
     toggleTheme() {
         document.body.classList.toggle('dark-mode');
         const theme = document.body.classList.contains('dark-mode') ? 'dark' : 'light';
@@ -402,7 +403,6 @@ class SocialMediaApp {
         document.querySelector('#theme-toggle').textContent = isDark ? '☀️' : '🌙';
     }
 
-    // ==================== STORAGE ====================
     saveToStorage() {
         localStorage.setItem('socialmedia_posts', JSON.stringify(this.posts));
     }
@@ -415,7 +415,7 @@ class SocialMediaApp {
                 timestamp: new Date(p.timestamp)
             }));
         } else {
-            // Default demo posts
+
             this.posts = [
                 {
                     id: Date.now() - 3600000,
@@ -441,30 +441,28 @@ class SocialMediaApp {
             this.saveToStorage();
         }
     }
-}
 
-// ==================== REACTIONS ====================
-setupReactionEvents(){
+setupReactionEvents() {
     document.querySelectorAll('.post-card').forEach(postEl => {
         const postId = Number(postEl.dataset.postId);
         const reactionPopup = postEl.querySelector('.reaction-popup');
         const likeBtn = postEl.querySelector('.like-btn');
 
-        // Show/hide popup
-        likeBtn.addEventListener('mouseenter', () => reactionPopup.style.display = 'flex');
-        likeBtn.addEventListener('mouseleave', () => reactionPopup.style.display = 'none');
 
-        // Handle reaction clicks
+        likeBtn.addEventListener('mouseenter', () => reactionPopup.style.display = 'flex');
+        document.querySelector('.post-card').addEventListener('mouseleave', () => reactionPopup.style.display = 'none');
+
+
         reactionPopup.querySelectorAll('.reaction-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 const emoji = btn.textContent;
                 const post = this.posts.find(p => p.id === postId);
                 if (!post) return;
 
-                // Update reactions
+
                 post.reaction = emoji;
                 post.liked = true;
-                post.likes = 1; // optional: you can sum reactions count if needed
+                post.likes = 1; 
                 this.saveToStorage();
                 this.renderFeed();
             });
@@ -472,9 +470,7 @@ setupReactionEvents(){
     });
 }
 
-// ==================== INITIALIZATION ====================
-const app = new SocialMediaApp();
+}
 
-// Demo login credentials
-console.log('%c📱 SocialHub - Demo Credentials', 'font-size: 14px; font-weight: bold; color: #FF1493;');
-console.log('%cEmail: test@test.com\nPassword: 123456', 'font-size: 12px; color: #00CED1;');
+
+const app = new SocialMediaApp();

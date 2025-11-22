@@ -5,22 +5,21 @@
 }
 
 :root {
-    /* Light Mode Colors */
-    --primary: #2f5cbd;           /* green main accent */
-    --primary-light: #4345a8;     /* light green */
-    --accent: #2196F3;            /* blue accent */
-    --accent-light: #64B5F6;      /* light blue */
-    --bg-primary: #FFFFFF;         /* main background */
-    --bg-secondary: #dadada;       /* card/background contrast */
-    --text-primary: #212121;      /* main text */
-    --text-secondary: #757575;    /* secondary text */
-    --border-color: #E0E0E0;      /* subtle borders */
+    --primary: #2f5cbd;           
+    --primary-light: #4345a8;     
+    --accent: #2196F3;            
+    --accent-light: #64B5F6;      
+    --bg-primary: #FFFFFF;         
+    --bg-secondary: #dadada;       
+    --text-primary: #212121;      
+    --text-secondary: #757575;    
+    --border-color: #E0E0E0;      
     --shadow: 0 4px 12px rgba(0,0,0,0.08);
     --shadow-hover: 0 8px 20px rgba(0,0,0,0.12);
 
-    /* Dark Mode Colors */
-    --bg-primary-dark: #121212;    /* dark main bg */
-    --bg-secondary-dark: #1E1E1E;  /* card bg */
+ 
+    --bg-primary-dark: #121212;    
+    --bg-secondary-dark: #1E1E1E;  
     --text-primary-dark: #FFFFFF;
     --text-secondary-dark: #B3B3B3;
     --border-color-dark: #2C2C2C;
@@ -44,7 +43,7 @@ body {
     transition: background-color 0.3s, color 0.3s;
 }
 
-/* Auth Styles */
+
 .auth-screen {
     display: none;
     position: fixed;
@@ -66,7 +65,7 @@ body {
     border-radius: 20px;
     box-shadow: var(--shadow-hover);
     overflow: hidden;
-    max-width: 900px;   /* thoda wide rakhna image + form ke liye */
+    max-width: 900px;   
     width: 90%;
     margin-bottom: 25px;
      min-height: 300px;
@@ -417,7 +416,7 @@ body {
     border-color: var(--primary);
 }
 
-/* Posts Feed */
+
 .posts-feed {
     display: flex;
     flex-direction: column;
@@ -668,14 +667,14 @@ body {
         position: relative;
     }
     .auth-wrapper {
-        flex-direction: column; /* stack image + form */
+        flex-direction: column; 
         max-width: 95%;
     }
 
     .auth-left {
         flex: unset;
         width: 100%;
-         /* adjust height for smaller screens */
+
     }
 
     .auth-left img {
@@ -691,7 +690,7 @@ body {
         padding: 20px;
     }
 }
-/* Responsive Design */
+
 @media (max-width: 600px) {
     .header {
         flex-wrap: wrap;
@@ -703,7 +702,7 @@ body {
         font-size: 12px;
     }
   .auth-left {
-        height: 150px; /* shrink image further */
+        height: 150px;
     }
 
     .auth-right {
