@@ -18,19 +18,19 @@ class SocialMediaApp {
     // ==================== AUTHENTICATION ====================
     setupEventListeners() {
         // Auth events
-        document.getElementById('toggle-signup').addEventListener('click', () => this.toggleAuthForm());
-        document.getElementById('toggle-login').addEventListener('click', () => this.toggleAuthForm());
-        document.getElementById('login-form').addEventListener('submit', (e) => this.handleLogin(e));
-        document.getElementById('signup-form').addEventListener('submit', (e) => this.handleSignup(e));
+        document.querySelector('#toggle-signup').addEventListener('click', () => this.toggleAuthForm());
+        document.querySelector('#toggle-login').addEventListener('click', () => this.toggleAuthForm());
+        document.querySelector('#login-form').addEventListener('submit', (e) => this.handleLogin(e));
+        document.querySelector('#signup-form').addEventListener('submit', (e) => this.handleSignup(e));
 
         // Feed events
-        document.getElementById('post-btn').addEventListener('click', () => this.createPost());
-        document.getElementById('post-text').addEventListener('keydown', (e) => {
+        document.querySelector('#post-btn').addEventListener('click', () => this.createPost());
+        document.querySelector('#post-text').addEventListener('keydown', (e) => {
             if (e.key === 'Enter' && e.ctrlKey) this.createPost();
         });
 
         // Search and filter
-        document.getElementById('search-input').addEventListener('input', (e) => this.searchPosts(e.target.value));
+        document.querySelector('#search-input').addEventListener('input', (e) => this.searchPosts(e.target.value));
         document.querySelectorAll('.filter-btn').forEach(btn => {
             btn.addEventListener('click', (e) => this.setFilter(e.target.dataset.filter, e.target));
         });
@@ -39,33 +39,33 @@ class SocialMediaApp {
         document.querySelectorAll('.emoji-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const emoji = e.target.dataset.emoji;
-                const textarea = document.getElementById('post-text');
+                const textarea = document.querySelector('#post-text');
                 textarea.value += emoji;
                 textarea.focus();
             });
         });
 
         // Theme toggle
-        document.getElementById('theme-toggle').addEventListener('click', () => this.toggleTheme());
+        document.querySelector('#theme-toggle').addEventListener('click', () => this.toggleTheme());
 
         // Logout
-        document.getElementById('logout-btn').addEventListener('click', () => this.logout());
+        document.querySelector('#logout-btn').addEventListener('click', () => this.logout());
 
         // Modal
         document.querySelector('.modal-close').addEventListener('click', () => this.closeEditModal());
-        document.getElementById('cancel-edit').addEventListener('click', () => this.closeEditModal());
-        document.getElementById('save-edit').addEventListener('click', () => this.saveEdit());
+        document.querySelector('#cancel-edit').addEventListener('click', () => this.closeEditModal());
+        document.querySelector('#save-edit').addEventListener('click', () => this.saveEdit());
     }
 
     toggleAuthForm() {
-        document.getElementById('login-form').classList.toggle('active');
-        document.getElementById('signup-form').classList.toggle('active');
+        document.querySelector('#login-form').classList.toggle('active');
+        document.querySelector('#signup-form').classList.toggle('active');
     }
 
     handleLogin(e) {
         e.preventDefault();
-        const email = document.getElementById('login-email').value.trim();
-        const password = document.getElementById('login-password').value.trim();
+        const email = document.querySelector('#login-email').value.trim();
+        const password = document.querySelector('#login-password').value.trim();
 
         if (!email || !password) {
             document.querySelector('#requiredPara').textContent = 'Please fill all fields';
@@ -89,9 +89,9 @@ class SocialMediaApp {
 
     handleSignup(e) {
         e.preventDefault();
-        const name = document.getElementById('signup-name').value.trim();
-        const email = document.getElementById('signup-email').value.trim();
-        const password = document.getElementById('signup-password').value.trim();
+        const name = document.querySelector('#signup-name').value.trim();
+        const email = document.querySelector('#signup-email').value.trim();
+        const password = document.querySelector('#signup-password').value.trim();
 
         if (!name || !email || !password) {
           document.querySelector('#requiredPara').textContent = 'Please fill all fields';
@@ -120,11 +120,11 @@ class SocialMediaApp {
     }
 
     clearAuthForms() {
-        document.getElementById('login-email').value = '';
-        document.getElementById('login-password').value = '';
-        document.getElementById('signup-name').value = '';
-        document.getElementById('signup-email').value = '';
-        document.getElementById('signup-password').value = '';
+        document.querySelector('#login-email').value = '';
+        document.querySelector('#login-password').value = '';
+        document.querySelector('#signup-name').value = '';
+        document.querySelector('#signup-email').value = '';
+        document.querySelector('#signup-password').value = '';
     }
 
     checkAuthStatus() {
@@ -142,28 +142,29 @@ class SocialMediaApp {
         localStorage.removeItem('currentUser');
         this.showAuth();
         this.clearAuthForms();
-        document.getElementById('login-form').classList.add('active');
-        document.getElementById('signup-form').classList.remove('active');
+        document.querySelector('#login-form').classList.add('active');
+        document.querySelector('#signup-form').classList.remove('active');
     }
 
     // ==================== UI DISPLAY ====================
     showAuth() {
-        document.getElementById('auth-container').classList.add('active');
+        document.querySelector('.auth-nav').style.display = 'flex' 
+        document.querySelector('#auth-container').classList.add('active');
         document.querySelector('.feed-screen').classList.remove('active');
     }
 
     showFeed() {
-        document.querySelector('.auth-header').style.display = 'none' 
-        document.getElementById('auth-container').classList.remove('active');
+        document.querySelector('.auth-nav').style.display = 'none' 
+        document.querySelector('#auth-container').classList.remove('active');
         document.querySelector('.feed-screen').classList.add('active');
-        document.getElementById('welcome-user').textContent = `Welcome, ${this.currentUser.name}`;
+        document.querySelector('#welcome-user').textContent = `Welcome, ${this.currentUser.name}`;
         this.renderFeed();
     }
 
     // ==================== POST MANAGEMENT ====================
     createPost() {
-        const text = document.getElementById('post-text').value.trim();
-        const imageUrl = document.getElementById('post-image').value.trim();
+        const text = document.querySelector('#post-text').value.trim();
+        const imageUrl = document.querySelector('#post-image').value.trim();
 
         if (!text) {
             alert('Please write something to post!');
@@ -186,8 +187,8 @@ class SocialMediaApp {
         this.renderFeed();
 
         // Clear inputs
-        document.getElementById('post-text').value = '';
-        document.getElementById('post-image').value = '';
+        document.querySelector('#post-text').value = '';
+        document.querySelector('#post-image').value = '';
 
         console.log('[v0] Post created successfully');
     }
@@ -216,28 +217,28 @@ class SocialMediaApp {
         if (!post) return;
 
         this.editingPostId = postId;
-        document.getElementById('edit-text').value = post.text;
-        document.getElementById('edit-image').value = post.image;
-        document.getElementById('edit-modal').classList.add('active');
+        document.querySelector('#edit-text').value = post.text;
+        document.querySelector('#edit-image').value = post.image;
+        document.querySelector('#edit-modal').classList.add('active');
     }
 
     closeEditModal() {
         this.editingPostId = null;
-        document.getElementById('edit-modal').classList.remove('active');
+        document.querySelector('#edit-modal').classList.remove('active');
     }
 
     saveEdit() {
         const post = this.posts.find(p => p.id === this.editingPostId);
         if (!post) return;
 
-        const newText = document.getElementById('edit-text').value.trim();
+        const newText = document.querySelector('#edit-text').value.trim();
         if (!newText) {
             alert('Post cannot be empty!');
             return;
         }
 
         post.text = newText;
-        post.image = document.getElementById('edit-image').value.trim();
+        post.image = document.querySelector('#edit-image').value.trim();
         this.saveToStorage();
         this.renderFeed();
         this.closeEditModal();
@@ -295,7 +296,7 @@ class SocialMediaApp {
 
     // ==================== RENDERING ====================
     renderFeed(searchQuery = '') {
-        const feed = document.getElementById('posts-feed');
+        const feed = document.querySelector('#posts-feed');
         const posts = this.getFilteredAndSortedPosts(searchQuery);
 
         if (posts.length === 0) {
@@ -338,11 +339,21 @@ class SocialMediaApp {
                     ${post.image ? `<img src="${this.escapeHtml(post.image)}" alt="Post image" class="post-image" onerror="this.style.display='none'">` : ''}
                 </div>
                 <div class="post-actions">
-                    <button class="action-btn like-btn ${liked}" title="Like">
-                        ❤️ <span>${post.likes}</span>
-                    </button>
-                    <button class="action-btn edit-btn" title="Edit">✏️ Edit</button>
-                    <button class="action-btn delete-btn" title="Delete">🗑️ Delete</button>
+  <button class="action-btn like-btn ${post.reaction ? 'liked' : ''}" title="Like">
+        ${post.reaction ? post.reaction : '❤️'} 
+        <span>${post.likes}</span>
+    </button>
+    <div class="reaction-popup" style="display:none;">
+        <span class="reaction-btn">❤️</span>
+        <span class="reaction-btn">😂</span>
+        <span class="reaction-btn">😍</span>
+        <span class="reaction-btn">😮</span>
+        <span class="reaction-btn">😢</span>
+        <span class="reaction-btn">😡</span>
+        <span class="reaction-btn">👍</span>
+    </div>
+    <button class="action-btn edit-btn" title="Edit">✏️ Edit</button>
+    <button class="action-btn delete-btn" title="Delete">🗑️ Delete</button>
                 </div>
             </div>
         `;
@@ -388,7 +399,7 @@ class SocialMediaApp {
 
     updateThemeButton() {
         const isDark = document.body.classList.contains('dark-mode');
-        document.getElementById('theme-toggle').textContent = isDark ? '☀️' : '🌙';
+        document.querySelector('#theme-toggle').textContent = isDark ? '☀️' : '🌙';
     }
 
     // ==================== STORAGE ====================
@@ -408,9 +419,9 @@ class SocialMediaApp {
             this.posts = [
                 {
                     id: Date.now() - 3600000,
-                    author: 'Demo User',
-                    text: '🚀 Welcome to SocialHub! This is a demo post. Try creating your own!',
-                    image: '',
+                    author: 'Mark Zuckerberg',
+                    text: 'hello everyone! Welcome to LinkUp, your new favorite social media app! 🎉',
+                    image: './zuckerburg.png',
                     likes: 5,
                     liked: false,
                     timestamp: new Date(Date.now() - 3600000),
@@ -418,9 +429,9 @@ class SocialMediaApp {
                 },
                 {
                     id: Date.now() - 1800000,
-                    author: 'Demo User',
-                    text: '✨ Like, edit, delete, search, and filter posts. Dark mode is available too!',
-                    image: '',
+                    author: 'Elon Musk',
+                    text: 'Excited to see what the future holds with LinkUp! Let\'s connect and innovate together. 🚀',
+                    image: './elonmusk.png',
                     likes: 3,
                     liked: false,
                     timestamp: new Date(Date.now() - 1800000),
@@ -430,6 +441,35 @@ class SocialMediaApp {
             this.saveToStorage();
         }
     }
+}
+
+// ==================== REACTIONS ====================
+setupReactionEvents(){
+    document.querySelectorAll('.post-card').forEach(postEl => {
+        const postId = Number(postEl.dataset.postId);
+        const reactionPopup = postEl.querySelector('.reaction-popup');
+        const likeBtn = postEl.querySelector('.like-btn');
+
+        // Show/hide popup
+        likeBtn.addEventListener('mouseenter', () => reactionPopup.style.display = 'flex');
+        likeBtn.addEventListener('mouseleave', () => reactionPopup.style.display = 'none');
+
+        // Handle reaction clicks
+        reactionPopup.querySelectorAll('.reaction-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const emoji = btn.textContent;
+                const post = this.posts.find(p => p.id === postId);
+                if (!post) return;
+
+                // Update reactions
+                post.reaction = emoji;
+                post.liked = true;
+                post.likes = 1; // optional: you can sum reactions count if needed
+                this.saveToStorage();
+                this.renderFeed();
+            });
+        });
+    });
 }
 
 // ==================== INITIALIZATION ====================
