@@ -42,7 +42,7 @@
                 <input type="password" id="login-password" placeholder="Password" required>
             </div>
             <button type="submit" class="btn-primary">Login</button>
-            <p id="requiredPara"></p>
+            <p id="loginrequiredPara"></p>
             <p class="toggle-form">Don't have an account? <span id="toggle-signup">Sign Up</span></p>
         </form>
 
@@ -58,13 +58,30 @@
                 <input type="password" id="signup-password" placeholder="Password" required>
             </div>
             <button type="submit" class="btn-primary">Sign Up</button>
-              <p id="requiredPara"></p>
+              <p id="signuprequiredPara"></p>
             <p class="toggle-form">Already have an account? <span id="toggle-login">Login</span></p>
         </form>
     </div>
+    
 </div>
 
+</div>
+<div id="signup-success-modal" >
+<div class="signupModal-content">
+    <div class="signupModal-header">
+        <h2>Account Created 🎉</h2>
     </div>
+
+    <div class="signupModal-body">
+        <p>Your account has been created successfully!</p>
+        <p>Please login to continue.</p>
+    </div>
+
+    <div class="signupModal-footer">
+        <button id="signup-success-btn" class="btn-primary">Now Login</button>
+    </div>
+</div>
+</div>
 
     <div id="feed-container" class="feed-screen">
 

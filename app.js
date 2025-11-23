@@ -6,6 +6,7 @@ class SocialMediaApp {
         this.currentFilter = 'latest';
         this.editingPostId = null;
         this.init();
+
     }
 
     init() {
@@ -38,6 +39,10 @@ class SocialMediaApp {
                 textarea.value += emoji;
                 textarea.focus();
             });
+            document.querySelectorAll('.theme-btn').forEach(btn => {
+                btn.addEventListener('click', () => this.toggleTheme());
+            });
+
         });
 
 
@@ -50,6 +55,7 @@ class SocialMediaApp {
         document.querySelector('.modal-close').addEventListener('click', () => this.closeEditModal());
         document.querySelector('#cancel-edit').addEventListener('click', () => this.closeEditModal());
         document.querySelector('#save-edit').addEventListener('click', () => this.saveEdit());
+        
     }
 
     toggleAuthForm() {
@@ -63,16 +69,16 @@ class SocialMediaApp {
         const password = document.querySelector('#login-password').value.trim();
 
         if (!email || !password) {
-            document.querySelector('#requiredPara').textContent = 'Please fill all fields';
+            document.querySelector('#loginrequiredPara').textContent = 'Please fill all fields';
             return;
         }
 
-    
+
         const users = JSON.parse(localStorage.getItem('users')) || [];
         const user = users.find(u => u.email === email && u.password === password);
 
         if (!user) {
-            document.querySelector('#requiredPara').textContent = 'Invalid email or password!';
+            document.querySelector('#loginrequiredPara').textContent = 'Invalid email or password!';
             return;
         }
 
@@ -80,6 +86,19 @@ class SocialMediaApp {
         localStorage.setItem('currentUser', JSON.stringify(user));
         this.showFeed();
         this.clearAuthForms();
+    }
+    openSignupSuccessModal() {
+        const modal = document.querySelector('#signup-success-modal');
+        modal.style.display = 'flex';
+
+        document.querySelector('.modal-close').onclick = () => {
+            modal.style.display = 'none';
+        };
+
+        document.querySelector('#signup-success-btn').onclick = () => {
+            modal.style.display = 'none';
+            this.toggleAuthForm(); // switch to login form
+        };
     }
 
     handleSignup(e) {
@@ -89,19 +108,19 @@ class SocialMediaApp {
         const password = document.querySelector('#signup-password').value.trim();
 
         if (!name || !email || !password) {
-          document.querySelector('#requiredPara').textContent = 'Please fill all fields';
+            document.querySelector('#signuprequiredPara').textContent = 'Please fill all fields';
             return;
         }
 
         if (password.length < 8) {
-            document.querySelector('#requiredPara').textContent = 'Password must be at least 4 characters long!';
+            document.querySelector('#signuprequiredPara').textContent = 'Password must be at least 4 characters long!';
             return;
         }
 
 
         let users = JSON.parse(localStorage.getItem('users')) || [];
         if (users.find(u => u.email === email)) {
-            document.querySelector('#requiredPara').textContent = 'Email already registered!';
+            document.querySelector('#signuprequiredPara').textContent = 'Email already registered!';
             return;
         }
 
@@ -109,9 +128,9 @@ class SocialMediaApp {
         users.push(newUser);
         localStorage.setItem('users', JSON.stringify(users));
 
-        
-        this.toggleAuthForm();
+
         this.clearAuthForms();
+        this.openSignupSuccessModal();
     }
 
     clearAuthForms() {
@@ -141,15 +160,15 @@ class SocialMediaApp {
         document.querySelector('#signup-form').classList.remove('active');
     }
 
- 
+
     showAuth() {
-        document.querySelector('.auth-nav').style.display = 'flex' 
+        document.querySelector('.auth-nav').style.display = 'flex'
         document.querySelector('#auth-container').classList.add('active');
         document.querySelector('.feed-screen').classList.remove('active');
     }
 
     showFeed() {
-        document.querySelector('.auth-nav').style.display = 'none' 
+        document.querySelector('.auth-nav').style.display = 'none'
         document.querySelector('#auth-container').classList.remove('active');
         document.querySelector('.feed-screen').classList.add('active');
         document.querySelector('#welcome-user').textContent = `Welcome, ${this.currentUser.name}`;
@@ -189,9 +208,9 @@ class SocialMediaApp {
     }
 
     deletePost(postId) {
-       let delModal =  document.querySelector('#delete-modal');
-       delModal.style.display = 'flex';
-         document.querySelector('#confirm-delete').onclick = () => {
+        let delModal = document.querySelector('#delete-modal');
+        delModal.style.display = 'flex';
+        document.querySelector('#confirm-delete').onclick = () => {
             this.posts = this.posts.filter(p => p.id !== postId);
             this.saveToStorage();
             this.renderFeed();
@@ -316,49 +335,54 @@ class SocialMediaApp {
             if (deleteBtn) deleteBtn.addEventListener('click', () => this.deletePost(post.id));
             if (editBtn) editBtn.addEventListener('click', () => this.openEditModal(post.id));
         });
-         this.setupReactionEvents();
+        this.setupReactionEvents();
     }
 
-    createPostHTML(post) {
-        const timeAgo = this.getTimeAgo(post.timestamp);
-        const liked = post.liked ? 'liked' : '';
+ createPostHTML(post) {
+    const timeAgo = this.getTimeAgo(post.timestamp);
+    const liked = post.liked ? 'liked' : '';
 
-        return `
-            <div class="post-card" data-post-id="${post.id}">
-                <div class="post-header">
-                    <div class="post-user">
-                        <div class="post-avatar">👤</div>
-                        <div class="post-info">
-                            <h3>${this.escapeHtml(post.author)}</h3>
-                            <span class="post-time">${timeAgo}</span>
-                        </div>
+    // Only show edit/delete if currentUser is the author
+    const isAuthor = this.currentUser && post.author === this.currentUser.name;
+
+    return `
+        <div class="post-card" data-post-id="${post.id}">
+            <div class="post-header">
+                <div class="post-user">
+                    <div class="post-avatar">👤</div>
+                    <div class="post-info">
+                        <h3>${this.escapeHtml(post.author)}</h3>
+                        <span class="post-time">${timeAgo}</span>
                     </div>
-                    <button class="post-menu">⋮</button>
                 </div>
-                <div class="post-content">
-                    <p class="post-text">${this.escapeHtml(post.text)}</p>
-                    ${post.image ? `<img src="${this.escapeHtml(post.image)}" alt="Post image" class="post-image" onerror="this.style.display='none'">` : ''}
-                </div>
-                <div class="post-actions">
-  <button class="action-btn like-btn ${post.reaction ? 'liked' : ''}" title="Like">
-        ${post.reaction ? post.reaction : '❤️'} 
-        <span>${post.likes}</span>
-    </button>
-    <div class="reaction-popup" style="display:none;">
-        <span class="reaction-btn">❤️</span>
-        <span class="reaction-btn">😂</span>
-        <span class="reaction-btn">😍</span>
-        <span class="reaction-btn">😮</span>
-        <span class="reaction-btn">😢</span>
-        <span class="reaction-btn">😡</span>
-        <span class="reaction-btn">👍</span>
-    </div>
-    <button class="action-btn edit-btn" title="Edit">✏️ Edit</button>
-    <button class="action-btn delete-btn" title="Delete">🗑️ Delete</button>
-                </div>
+                <button class="post-menu">⋮</button>
             </div>
-        `;
-    }
+            <div class="post-content">
+                <p class="post-text">${this.escapeHtml(post.text)}</p>
+                ${post.image ? `<img src="${this.escapeHtml(post.image)}" alt="Post image" class="post-image" onerror="this.style.display='none'">` : ''}
+            </div>
+            <div class="post-actions">
+                <button class="action-btn like-btn ${post.reaction ? 'liked' : ''}" title="Like">
+                    ${post.reaction ? post.reaction : '❤️'} 
+                    <span>${post.likes}</span>
+                </button>
+                <div class="reaction-popup" style="display:none;">
+                    <span class="reaction-btn">❤️</span>
+                    <span class="reaction-btn">😂</span>
+                    <span class="reaction-btn">😍</span>
+                    <span class="reaction-btn">😮</span>
+                    <span class="reaction-btn">😢</span>
+                    <span class="reaction-btn">😡</span>
+                    <span class="reaction-btn">👍</span>
+                </div>
+
+                ${isAuthor ? `<button class="action-btn edit-btn" title="Edit">✏️ Edit</button>
+                <button class="action-btn delete-btn" title="Delete">🗑️ Delete</button>` : ''}
+            </div>
+        </div>
+    `;
+}
+
 
     getTimeAgo(timestamp) {
         const now = new Date();
@@ -442,33 +466,33 @@ class SocialMediaApp {
         }
     }
 
-setupReactionEvents() {
-    document.querySelectorAll('.post-card').forEach(postEl => {
-        const postId = Number(postEl.dataset.postId);
-        const reactionPopup = postEl.querySelector('.reaction-popup');
-        const likeBtn = postEl.querySelector('.like-btn');
+    setupReactionEvents() {
+        document.querySelectorAll('.post-card').forEach(postEl => {
+            const postId = Number(postEl.dataset.postId);
+            const reactionPopup = postEl.querySelector('.reaction-popup');
+            const likeBtn = postEl.querySelector('.like-btn');
 
 
-        likeBtn.addEventListener('mouseenter', () => reactionPopup.style.display = 'flex');
-        document.querySelector('.post-card').addEventListener('mouseleave', () => reactionPopup.style.display = 'none');
+            likeBtn.addEventListener('mouseenter', () => reactionPopup.style.display = 'flex');
+            document.querySelector('.post-card').addEventListener('mouseleave', () => reactionPopup.style.display = 'none');
 
 
-        reactionPopup.querySelectorAll('.reaction-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const emoji = btn.textContent;
-                const post = this.posts.find(p => p.id === postId);
-                if (!post) return;
+            reactionPopup.querySelectorAll('.reaction-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const emoji = btn.textContent;
+                    const post = this.posts.find(p => p.id === postId);
+                    if (!post) return;
 
 
-                post.reaction = emoji;
-                post.liked = true;
-                post.likes = 1; 
-                this.saveToStorage();
-                this.renderFeed();
+                    post.reaction = emoji;
+                    post.liked = true;
+                    post.likes = 1;
+                    this.saveToStorage();
+                    this.renderFeed();
+                });
             });
         });
-    });
-}
+    }
 
 }
 
